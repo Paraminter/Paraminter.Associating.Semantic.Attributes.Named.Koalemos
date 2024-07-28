@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyName>Paraminter.Semantic.Attributes.Named.Koalemos</AssemblyName>
+        
+        <PackageId>Paraminter.Semantic.Attributes.Named.Koalemos</PackageId>
+        <Description>Provides general implementations of services related to a Paraminter associator specialized in semantic named attribute arguments.</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Paraminter.Associators.Queries" />
+        <PackageReference Include="Paraminter.Semantic.Attributes.Named.Common.Queries.Collectors" />
+        <PackageReference Include="Paraminter.Queries.Handlers" />
+
+        <ProjectReference Include="$(SolutionDir)\src\Queries\Queries.csproj" />
+    </ItemGroup>
+
+</Project>
