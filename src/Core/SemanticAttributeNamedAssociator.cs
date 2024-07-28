@@ -30,10 +30,10 @@ public sealed class SemanticAttributeNamedAssociator
 
         foreach (var association in query.Data.Associations)
         {
-            var parameter = association.Key;
-            var argumentData = association.Value;
+            var parameterName = association.Key;
+            var argument = association.Value;
 
-            queryResponseCollector.Associations.Add(parameter, argumentData);
+            queryResponseCollector.Associations.Add(parameterName, argument);
         }
     }
 }
