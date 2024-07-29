@@ -2,30 +2,31 @@
 
 using Paraminter.Associators.Queries;
 using Paraminter.Queries.Handlers;
+using Paraminter.Semantic.Attributes.Named.Koalemos.Common;
 using Paraminter.Semantic.Attributes.Named.Koalemos.Queries;
-using Paraminter.Semantic.Attributes.Named.Queries.Collectors;
+using Paraminter.Semantic.Attributes.Named.Queries.Handlers;
 
 using System;
 
 /// <summary>Associates semantic named attribute arguments.</summary>
 public sealed class SemanticAttributeNamedAssociator
-    : IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseCollector>
+    : IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseHandler>
 {
     /// <summary>Instantiates a <see cref="SemanticAttributeNamedAssociator"/>, associating semantic named attribute arguments.</summary>
     public SemanticAttributeNamedAssociator() { }
 
-    void IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseCollector>.Handle(
+    void IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseHandler>.Handle(
         IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData> query,
-        IAssociateSemanticAttributeNamedQueryResponseCollector queryResponseCollector)
+        IAssociateSemanticAttributeNamedQueryResponseHandler queryResponseHandler)
     {
         if (query is null)
         {
             throw new ArgumentNullException(nameof(query));
         }
 
-        if (queryResponseCollector is null)
+        if (queryResponseHandler is null)
         {
-            throw new ArgumentNullException(nameof(queryResponseCollector));
+            throw new ArgumentNullException(nameof(queryResponseHandler));
         }
 
         foreach (var association in query.Data.Associations)
@@ -33,7 +34,9 @@ public sealed class SemanticAttributeNamedAssociator
             var parameterName = association.Key;
             var argument = association.Value;
 
-            queryResponseCollector.Associations.Add(parameterName, argument);
+            var command = new AddSemanticAttributeNamedAssociationCommand(parameterName, argument);
+
+            queryResponseHandler.AssociationCollector.Handle(command);
         }
     }
 }
