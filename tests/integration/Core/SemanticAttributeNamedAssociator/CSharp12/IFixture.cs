@@ -3,9 +3,9 @@
 using Paraminter.Associators.Queries;
 using Paraminter.Queries.Handlers;
 using Paraminter.Semantic.Attributes.Named.Koalemos.Queries;
-using Paraminter.Semantic.Attributes.Named.Queries.Collectors;
+using Paraminter.Semantic.Attributes.Named.Queries.Handlers;
 
 internal interface IFixture
 {
-    public abstract IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseCollector> Sut { get; }
+    public abstract IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseHandler> Sut { get; }
 }

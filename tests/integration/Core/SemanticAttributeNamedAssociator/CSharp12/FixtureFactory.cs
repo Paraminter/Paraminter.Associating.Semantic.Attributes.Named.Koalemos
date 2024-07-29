@@ -3,7 +3,7 @@
 using Paraminter.Associators.Queries;
 using Paraminter.Queries.Handlers;
 using Paraminter.Semantic.Attributes.Named.Koalemos.Queries;
-using Paraminter.Semantic.Attributes.Named.Queries.Collectors;
+using Paraminter.Semantic.Attributes.Named.Queries.Handlers;
 
 internal static class FixtureFactory
 {
@@ -17,14 +17,14 @@ internal static class FixtureFactory
     private sealed class Fixture
         : IFixture
     {
-        private readonly IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseCollector> Sut;
+        private readonly IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseHandler> Sut;
 
         public Fixture(
-            IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseCollector> sut)
+            IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseHandler> sut)
         {
             Sut = sut;
         }
 
-        IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseCollector> IFixture.Sut => Sut;
+        IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseHandler> IFixture.Sut => Sut;
     }
 }

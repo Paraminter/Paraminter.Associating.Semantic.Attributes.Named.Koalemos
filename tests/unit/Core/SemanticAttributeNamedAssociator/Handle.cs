@@ -5,11 +5,13 @@ using Microsoft.CodeAnalysis;
 using Moq;
 
 using Paraminter.Associators.Queries;
+using Paraminter.Semantic.Attributes.Named.Commands;
 using Paraminter.Semantic.Attributes.Named.Koalemos.Queries;
-using Paraminter.Semantic.Attributes.Named.Queries.Collectors;
+using Paraminter.Semantic.Attributes.Named.Queries.Handlers;
 
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 using Xunit;
 
@@ -20,13 +22,13 @@ public sealed class Handle
     [Fact]
     public void NullQuery_ThrowsArgumentNullException()
     {
-        var result = Record.Exception(() => Target(null!, Mock.Of<IAssociateSemanticAttributeNamedQueryResponseCollector>()));
+        var result = Record.Exception(() => Target(null!, Mock.Of<IAssociateSemanticAttributeNamedQueryResponseHandler>()));
 
         Assert.IsType<ArgumentNullException>(result);
     }
 
     [Fact]
-    public void NullQueryResponseCollector_ThrowsArgumentNullException()
+    public void NullQueryResponseHandler_ThrowsArgumentNullException()
     {
         var result = Record.Exception(() => Target(Mock.Of<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>>(), null!));
 
@@ -37,43 +39,57 @@ public sealed class Handle
     public void NoAssociations_AddsNone()
     {
         Mock<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>> queryMock = new();
-        Mock<IAssociateSemanticAttributeNamedQueryResponseCollector> queryResponseCollectorMock = new() { DefaultValue = DefaultValue.Mock };
+        Mock<IAssociateSemanticAttributeNamedQueryResponseHandler> queryResponseHandlerMock = new() { DefaultValue = DefaultValue.Mock };
 
         queryMock.Setup(static (query) => query.Data.Associations).Returns([]);
 
-        Target(queryMock.Object, queryResponseCollectorMock.Object);
+        Target(queryMock.Object, queryResponseHandlerMock.Object);
 
-        queryResponseCollectorMock.Verify(static (collector) => collector.Associations.Add(It.IsAny<string>(), It.IsAny<TypedConstant>()), Times.Never());
+        queryResponseHandlerMock.Verify(static (collector) => collector.AssociationCollector.Handle(It.IsAny<IAddSemanticAttributeNamedAssociationCommand>()), Times.Never());
     }
 
     [Fact]
     public void SomeAssociations_AddsAllPairwise()
     {
-        var parameter1 = "Name1";
-        var parameter2 = "Name2";
+        var parameter1Name = "Name1";
+        var parameter2Name = "Name2";
 
         var argument1 = TypedConstantStore.GetNext();
         var argument2 = TypedConstantStore.GetNext();
 
-        var association1 = new KeyValuePair<string, TypedConstant>(parameter1, argument1);
-        var association2 = new KeyValuePair<string, TypedConstant>(parameter2, argument2);
+        var association1 = new KeyValuePair<string, TypedConstant>(parameter1Name, argument1);
+        var association2 = new KeyValuePair<string, TypedConstant>(parameter2Name, argument2);
 
         Mock<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>> queryMock = new();
-        Mock<IAssociateSemanticAttributeNamedQueryResponseCollector> queryResponseCollectorMock = new() { DefaultValue = DefaultValue.Mock };
+        Mock<IAssociateSemanticAttributeNamedQueryResponseHandler> queryResponseHandlerMock = new() { DefaultValue = DefaultValue.Mock };
 
         queryMock.Setup((query) => query.Data.Associations).Returns([association1, association2]);
 
-        Target(queryMock.Object, queryResponseCollectorMock.Object);
+        Target(queryMock.Object, queryResponseHandlerMock.Object);
 
-        queryResponseCollectorMock.Verify(static (collector) => collector.Associations.Add(It.IsAny<string>(), It.IsAny<TypedConstant>()), Times.Exactly(2));
-        queryResponseCollectorMock.Verify((collector) => collector.Associations.Add(parameter1, argument1), Times.Once());
-        queryResponseCollectorMock.Verify((collector) => collector.Associations.Add(parameter2, argument2), Times.Once());
+        queryResponseHandlerMock.Verify(static (collector) => collector.AssociationCollector.Handle(It.IsAny<IAddSemanticAttributeNamedAssociationCommand>()), Times.Exactly(2));
+        queryResponseHandlerMock.Verify(AssociationExpression(parameter1Name, argument1), Times.Once());
+        queryResponseHandlerMock.Verify(AssociationExpression(parameter2Name, argument2), Times.Once());
+    }
+
+    private static Expression<Action<IAssociateSemanticAttributeNamedQueryResponseHandler>> AssociationExpression(
+        string parameterName,
+        TypedConstant argument)
+    {
+        return (handler) => handler.AssociationCollector.Handle(It.Is(MatchAssociationCommand(parameterName, argument)));
+    }
+
+    private static Expression<Func<IAddSemanticAttributeNamedAssociationCommand, bool>> MatchAssociationCommand(
+        string parameterName,
+        TypedConstant argument)
+    {
+        return (command) => Equals(command.ParameterName, parameterName) && Equals(command.Argument, argument);
     }
 
     private void Target(
         IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData> query,
-        IAssociateSemanticAttributeNamedQueryResponseCollector queryResponseCollector)
+        IAssociateSemanticAttributeNamedQueryResponseHandler queryResponseHandler)
     {
-        Fixture.Sut.Handle(query, queryResponseCollector);
+        Fixture.Sut.Handle(query, queryResponseHandler);
     }
 }
