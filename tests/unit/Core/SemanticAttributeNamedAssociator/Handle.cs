@@ -45,7 +45,7 @@ public sealed class Handle
 
         Target(queryMock.Object, queryResponseHandlerMock.Object);
 
-        queryResponseHandlerMock.Verify(static (collector) => collector.AssociationCollector.Handle(It.IsAny<IAddSemanticAttributeNamedAssociationCommand>()), Times.Never());
+        queryResponseHandlerMock.Verify(static (handler) => handler.AssociationCollector.Handle(It.IsAny<IAddSemanticAttributeNamedAssociationCommand>()), Times.Never());
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public sealed class Handle
 
         Target(queryMock.Object, queryResponseHandlerMock.Object);
 
-        queryResponseHandlerMock.Verify(static (collector) => collector.AssociationCollector.Handle(It.IsAny<IAddSemanticAttributeNamedAssociationCommand>()), Times.Exactly(2));
+        queryResponseHandlerMock.Verify(static (handler) => handler.AssociationCollector.Handle(It.IsAny<IAddSemanticAttributeNamedAssociationCommand>()), Times.Exactly(2));
         queryResponseHandlerMock.Verify(AssociationExpression(parameter1Name, argument1), Times.Once());
         queryResponseHandlerMock.Verify(AssociationExpression(parameter2Name, argument2), Times.Once());
     }

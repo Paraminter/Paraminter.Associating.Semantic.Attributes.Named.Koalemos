@@ -52,7 +52,7 @@ public sealed class Handle
 
         Target(queryMock.Object, queryResponseHandlerMock.Object);
 
-        queryResponseHandlerMock.Verify(static (collector) => collector.AssociationCollector.Handle(It.IsAny<IAddSemanticAttributeNamedAssociationCommand>()), Times.Exactly(3));
+        queryResponseHandlerMock.Verify(static (handler) => handler.AssociationCollector.Handle(It.IsAny<IAddSemanticAttributeNamedAssociationCommand>()), Times.Exactly(3));
         queryResponseHandlerMock.Verify(AssociationExpression(parameterNames[0], arguments[0]), Times.Once());
         queryResponseHandlerMock.Verify(AssociationExpression(parameterNames[1], arguments[1]), Times.Once());
         queryResponseHandlerMock.Verify(AssociationExpression(parameterNames[2], arguments[2]), Times.Once());
