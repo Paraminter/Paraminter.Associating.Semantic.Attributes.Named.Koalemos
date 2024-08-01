@@ -1,11 +1,15 @@
 ﻿namespace Paraminter.Semantic.Attributes.Named.Koalemos;
 
-using Paraminter.Associators.Queries;
-using Paraminter.Queries.Handlers;
-using Paraminter.Semantic.Attributes.Named.Koalemos.Queries;
-using Paraminter.Semantic.Attributes.Named.Queries.Handlers;
+using Moq;
+
+using Paraminter.Associators.Commands;
+using Paraminter.Commands.Handlers;
+using Paraminter.Semantic.Attributes.Named.Commands;
+using Paraminter.Semantic.Attributes.Named.Koalemos.Commands;
 
 internal interface IFixture
 {
-    public abstract IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseHandler> Sut { get; }
+    public abstract ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>> Sut { get; }
+
+    public abstract Mock<ICommandHandler<IRecordSemanticAttributeNamedAssociationCommand>> RecorderMock { get; }
 }
