@@ -1,30 +1,41 @@
 ﻿namespace Paraminter.Semantic.Attributes.Named.Koalemos;
 
-using Paraminter.Associators.Queries;
-using Paraminter.Queries.Handlers;
-using Paraminter.Semantic.Attributes.Named.Koalemos.Queries;
-using Paraminter.Semantic.Attributes.Named.Queries.Handlers;
+using Moq;
+
+using Paraminter.Associators.Commands;
+using Paraminter.Commands.Handlers;
+using Paraminter.Semantic.Attributes.Named.Commands;
+using Paraminter.Semantic.Attributes.Named.Koalemos.Commands;
 
 internal static class FixtureFactory
 {
     public static IFixture Create()
     {
-        SemanticAttributeNamedAssociator sut = new();
+        Mock<ICommandHandler<IRecordSemanticAttributeNamedAssociationCommand>> recorderMock = new();
 
-        return new Fixture(sut);
+        SemanticAttributeNamedAssociator sut = new(recorderMock.Object);
+
+        return new Fixture(sut, recorderMock);
     }
 
     private sealed class Fixture
         : IFixture
     {
-        private readonly IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseHandler> Sut;
+        private readonly ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>> Sut;
+
+        private readonly Mock<ICommandHandler<IRecordSemanticAttributeNamedAssociationCommand>> RecorderMock;
 
         public Fixture(
-            IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseHandler> sut)
+            ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>> sut,
+            Mock<ICommandHandler<IRecordSemanticAttributeNamedAssociationCommand>> recorderMock)
         {
             Sut = sut;
+
+            RecorderMock = recorderMock;
         }
 
-        IQueryHandler<IAssociateArgumentsQuery<IAssociateSemanticAttributeNamedData>, IAssociateSemanticAttributeNamedQueryResponseHandler> IFixture.Sut => Sut;
+        ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>> IFixture.Sut => Sut;
+
+        Mock<ICommandHandler<IRecordSemanticAttributeNamedAssociationCommand>> IFixture.RecorderMock => RecorderMock;
     }
 }

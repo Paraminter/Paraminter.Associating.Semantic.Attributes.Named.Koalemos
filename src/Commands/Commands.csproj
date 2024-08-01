@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyName>Paraminter.Semantic.Attributes.Named.Koalemos.Commands</AssemblyName>
+
+        <RootNamespace>Paraminter.Semantic.Attributes.Named.Koalemos.Commands</RootNamespace>
+        
+        <PackageId>Paraminter.Semantic.Attributes.Named.Koalemos.Commands</PackageId>
+        <Description>Defines commands related to a Paraminter associator specialized in semantic named attribute arguments.</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Common" />
+    </ItemGroup>
+
+</Project>
