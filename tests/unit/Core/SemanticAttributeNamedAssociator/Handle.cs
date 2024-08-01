@@ -32,7 +32,7 @@ public sealed class Handle
     {
         Mock<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>> commandMock = new();
 
-        commandMock.Setup(static (query) => query.Data.Associations).Returns([]);
+        commandMock.Setup(static (command) => command.Data.Associations).Returns([]);
 
         Target(commandMock.Object);
 
@@ -53,7 +53,7 @@ public sealed class Handle
 
         Mock<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>> commandMock = new();
 
-        commandMock.Setup(static (query) => query.Data.Associations).Returns([association1, association2]);
+        commandMock.Setup(static (command) => command.Data.Associations).Returns([association1, association2]);
 
         Target(commandMock.Object);
 
