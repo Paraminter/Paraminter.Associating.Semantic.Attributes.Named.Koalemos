@@ -2,8 +2,10 @@
 
 using Moq;
 
+using Paraminter.Arguments.Semantic.Attributes.Named.Models;
+using Paraminter.Associators.Commands;
 using Paraminter.Commands.Handlers;
-using Paraminter.Semantic.Attributes.Named.Commands;
+using Paraminter.Parameters.Named.Models;
 
 using System;
 
@@ -22,13 +24,13 @@ public sealed class Constructor
     [Fact]
     public void ValidArguments_ReturnsAssociator()
     {
-        var result = Target(Mock.Of<ICommandHandler<IRecordSemanticAttributeNamedAssociationCommand>>());
+        var result = Target(Mock.Of<ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>>());
 
         Assert.NotNull(result);
     }
 
     private static SemanticAttributeNamedAssociator Target(
-        ICommandHandler<IRecordSemanticAttributeNamedAssociationCommand> recorder)
+        ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>> recorder)
     {
         return new SemanticAttributeNamedAssociator(recorder);
     }

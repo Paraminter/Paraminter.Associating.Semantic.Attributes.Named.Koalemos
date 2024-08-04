@@ -1,10 +1,11 @@
 ﻿namespace Paraminter.Semantic.Attributes.Named.Koalemos;
 
+using Paraminter.Arguments.Semantic.Attributes.Named.Models;
 using Paraminter.Associators.Commands;
 using Paraminter.Commands.Handlers;
-using Paraminter.Semantic.Attributes.Named.Commands;
-using Paraminter.Semantic.Attributes.Named.Koalemos.Commands;
+using Paraminter.Parameters.Named.Models;
 using Paraminter.Semantic.Attributes.Named.Koalemos.Common;
+using Paraminter.Semantic.Attributes.Named.Koalemos.Models;
 
 using System;
 
@@ -12,12 +13,12 @@ using System;
 public sealed class SemanticAttributeNamedAssociator
     : ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>>
 {
-    private readonly ICommandHandler<IRecordSemanticAttributeNamedAssociationCommand> Recorder;
+    private readonly ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>> Recorder;
 
     /// <summary>Instantiates a <see cref="SemanticAttributeNamedAssociator"/>, associating semantic named attribute arguments.</summary>
     /// <param name="recorder">Records associated semantic named attribute arguments.</param>
     public SemanticAttributeNamedAssociator(
-        ICommandHandler<IRecordSemanticAttributeNamedAssociationCommand> recorder)
+        ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>> recorder)
     {
         Recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
     }
@@ -32,10 +33,10 @@ public sealed class SemanticAttributeNamedAssociator
 
         foreach (var association in command.Data.Associations)
         {
-            var parameterName = association.Key;
-            var argument = association.Value;
+            var parameter = new NamedParameter(association.Key);
+            var argumentData = new SemanticAttributeNamedArgumentData(association.Value);
 
-            var recordCommand = new RecordSemanticAttributeNamedAssociationCommand(parameterName, argument);
+            var recordCommand = new RecordSemanticAttributeNamedAssociationCommand(parameter, argumentData);
 
             Recorder.Handle(recordCommand);
         }

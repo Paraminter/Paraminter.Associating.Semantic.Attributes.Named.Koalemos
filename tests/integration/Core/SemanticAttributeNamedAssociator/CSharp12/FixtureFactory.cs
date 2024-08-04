@@ -2,16 +2,17 @@
 
 using Moq;
 
+using Paraminter.Arguments.Semantic.Attributes.Named.Models;
 using Paraminter.Associators.Commands;
 using Paraminter.Commands.Handlers;
-using Paraminter.Semantic.Attributes.Named.Commands;
-using Paraminter.Semantic.Attributes.Named.Koalemos.Commands;
+using Paraminter.Parameters.Named.Models;
+using Paraminter.Semantic.Attributes.Named.Koalemos.Models;
 
 internal static class FixtureFactory
 {
     public static IFixture Create()
     {
-        Mock<ICommandHandler<IRecordSemanticAttributeNamedAssociationCommand>> recorderMock = new();
+        Mock<ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> recorderMock = new();
 
         SemanticAttributeNamedAssociator sut = new(recorderMock.Object);
 
@@ -23,11 +24,11 @@ internal static class FixtureFactory
     {
         private readonly ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>> Sut;
 
-        private readonly Mock<ICommandHandler<IRecordSemanticAttributeNamedAssociationCommand>> RecorderMock;
+        private readonly Mock<ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> RecorderMock;
 
         public Fixture(
             ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>> sut,
-            Mock<ICommandHandler<IRecordSemanticAttributeNamedAssociationCommand>> recorderMock)
+            Mock<ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> recorderMock)
         {
             Sut = sut;
 
@@ -36,6 +37,6 @@ internal static class FixtureFactory
 
         ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>> IFixture.Sut => Sut;
 
-        Mock<ICommandHandler<IRecordSemanticAttributeNamedAssociationCommand>> IFixture.RecorderMock => RecorderMock;
+        Mock<ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> IFixture.RecorderMock => RecorderMock;
     }
 }

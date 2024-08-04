@@ -1,23 +1,23 @@
 ﻿namespace Paraminter.Semantic.Attributes.Named.Koalemos.Common;
 
-using Microsoft.CodeAnalysis;
-
-using Paraminter.Semantic.Attributes.Named.Commands;
+using Paraminter.Arguments.Semantic.Attributes.Named.Models;
+using Paraminter.Associators.Commands;
+using Paraminter.Parameters.Named.Models;
 
 internal sealed class RecordSemanticAttributeNamedAssociationCommand
-    : IRecordSemanticAttributeNamedAssociationCommand
+    : IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>
 {
-    private readonly string ParameterName;
-    private readonly TypedConstant Argument;
+    private readonly INamedParameter Parameter;
+    private readonly ISemanticAttributeNamedArgumentData ArgumentData;
 
     public RecordSemanticAttributeNamedAssociationCommand(
-        string parameterName,
-        TypedConstant argument)
+        INamedParameter parameter,
+        ISemanticAttributeNamedArgumentData argumentData)
     {
-        ParameterName = parameterName;
-        Argument = argument;
+        Parameter = parameter;
+        ArgumentData = argumentData;
     }
 
-    string IRecordSemanticAttributeNamedAssociationCommand.ParameterName => ParameterName;
-    TypedConstant IRecordSemanticAttributeNamedAssociationCommand.Argument => Argument;
+    INamedParameter IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>.Parameter => Parameter;
+    ISemanticAttributeNamedArgumentData IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>.ArgumentData => ArgumentData;
 }

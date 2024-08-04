@@ -4,10 +4,11 @@ using Microsoft.CodeAnalysis;
 
 using Moq;
 
+using Paraminter.Arguments.Semantic.Attributes.Named.Models;
 using Paraminter.Associators.Commands;
 using Paraminter.Commands.Handlers;
-using Paraminter.Semantic.Attributes.Named.Commands;
-using Paraminter.Semantic.Attributes.Named.Koalemos.Commands;
+using Paraminter.Parameters.Named.Models;
+using Paraminter.Semantic.Attributes.Named.Koalemos.Models;
 
 using System;
 using System.Linq;
@@ -51,24 +52,38 @@ public sealed class Handle
 
         Target(commandMock.Object);
 
-        Fixture.RecorderMock.Verify(static (recorder) => recorder.Handle(It.IsAny<IRecordSemanticAttributeNamedAssociationCommand>()), Times.Exactly(3));
+        Fixture.RecorderMock.Verify(static (recorder) => recorder.Handle(It.IsAny<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>()), Times.Exactly(3));
         Fixture.RecorderMock.Verify(RecordExpression(parameterNames[0], arguments[0]), Times.Once());
         Fixture.RecorderMock.Verify(RecordExpression(parameterNames[1], arguments[1]), Times.Once());
         Fixture.RecorderMock.Verify(RecordExpression(parameterNames[2], arguments[2]), Times.Once());
     }
 
-    private static Expression<Action<ICommandHandler<IRecordSemanticAttributeNamedAssociationCommand>>> RecordExpression(
+    private static Expression<Action<ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>>> RecordExpression(
         string parameterName,
         TypedConstant argument)
     {
         return (recorder) => recorder.Handle(It.Is(MatchRecordCommand(parameterName, argument)));
     }
 
-    private static Expression<Func<IRecordSemanticAttributeNamedAssociationCommand, bool>> MatchRecordCommand(
+    private static Expression<Func<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>, bool>> MatchRecordCommand(
         string parameterName,
         TypedConstant argument)
     {
-        return (command) => Equals(command.ParameterName, parameterName) && Equals(command.Argument, argument);
+        return (command) => MatchParameter(parameterName, command.Parameter) && MatchArgumentData(argument, command.ArgumentData);
+    }
+
+    private static bool MatchParameter(
+        string parameterName,
+        INamedParameter parameter)
+    {
+        return Equals(parameterName, parameter.Name);
+    }
+
+    private static bool MatchArgumentData(
+        TypedConstant argument,
+        ISemanticAttributeNamedArgumentData argumentData)
+    {
+        return Equals(argument, argumentData.Argument);
     }
 
     private void Target(
