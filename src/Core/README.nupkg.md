@@ -1,5 +1,5 @@
 # Paraminter.Semantic.Attributes.Named.Koalemos
 
-Provides general implementations of services related to a `Paraminter` associator of semantic named attribute arguments.
+Provides a `Paraminter` associator of semantic named attribute arguments.
 
 See [GitHub](https://github.com/Paraminter/Paraminter.Semantic.Attributes.Named.Koalemos) for more information.
