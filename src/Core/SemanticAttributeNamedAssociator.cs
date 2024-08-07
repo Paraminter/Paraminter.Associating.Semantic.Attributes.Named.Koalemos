@@ -4,6 +4,7 @@ using Paraminter.Arguments.Semantic.Attributes.Named.Models;
 using Paraminter.Associators.Commands;
 using Paraminter.Commands.Handlers;
 using Paraminter.Parameters.Named.Models;
+using Paraminter.Recorders.Commands;
 using Paraminter.Semantic.Attributes.Named.Koalemos.Common;
 using Paraminter.Semantic.Attributes.Named.Koalemos.Models;
 
