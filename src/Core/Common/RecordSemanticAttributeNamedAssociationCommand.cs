@@ -1,8 +1,8 @@
 ﻿namespace Paraminter.Semantic.Attributes.Named.Koalemos.Common;
 
 using Paraminter.Arguments.Semantic.Attributes.Named.Models;
-using Paraminter.Associators.Commands;
 using Paraminter.Parameters.Named.Models;
+using Paraminter.Recorders.Commands;
 
 internal sealed class RecordSemanticAttributeNamedAssociationCommand
     : IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>
