@@ -1,4 +1,4 @@
-﻿namespace Paraminter.Semantic.Attributes.Named.Koalemos.Common;
+﻿namespace Paraminter.Semantic.Attributes.Named.Koalemos.Commands;
 
 using Paraminter.Arguments.Semantic.Attributes.Named.Models;
 using Paraminter.Parameters.Named.Models;
