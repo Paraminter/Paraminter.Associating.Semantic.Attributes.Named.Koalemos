@@ -1,11 +1,11 @@
 ﻿namespace Paraminter.Semantic.Attributes.Named.Koalemos;
 
 using Paraminter.Arguments.Semantic.Attributes.Named.Models;
-using Paraminter.Associators.Commands;
-using Paraminter.Commands.Handlers;
+using Paraminter.Commands;
+using Paraminter.Cqs.Handlers;
 using Paraminter.Parameters.Named.Models;
 using Paraminter.Recorders.Commands;
-using Paraminter.Semantic.Attributes.Named.Koalemos.Common;
+using Paraminter.Semantic.Attributes.Named.Koalemos.Commands;
 using Paraminter.Semantic.Attributes.Named.Koalemos.Models;
 
 using System;

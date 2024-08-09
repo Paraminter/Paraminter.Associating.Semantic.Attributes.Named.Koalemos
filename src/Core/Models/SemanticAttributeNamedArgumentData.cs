@@ -1,4 +1,4 @@
-﻿namespace Paraminter.Semantic.Attributes.Named.Koalemos.Common;
+﻿namespace Paraminter.Semantic.Attributes.Named.Koalemos.Models;
 
 using Microsoft.CodeAnalysis;
 
