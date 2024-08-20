@@ -1,31 +1,32 @@
 ﻿namespace Paraminter.Semantic.Attributes.Named.Koalemos;
 
+using Microsoft.CodeAnalysis;
+
 using Paraminter.Arguments.Semantic.Attributes.Named.Models;
 using Paraminter.Commands;
 using Paraminter.Cqs.Handlers;
 using Paraminter.Parameters.Named.Models;
-using Paraminter.Recorders.Commands;
 using Paraminter.Semantic.Attributes.Named.Koalemos.Commands;
 using Paraminter.Semantic.Attributes.Named.Koalemos.Models;
 
 using System;
 
-/// <summary>Associates semantic named attribute arguments.</summary>
+/// <summary>Associates semantic named attribute arguments with parameters.</summary>
 public sealed class SemanticAttributeNamedAssociator
-    : ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>>
+    : ICommandHandler<IAssociateAllArgumentsCommand<IAssociateAllSemanticAttributeNamedArgumentsData>>
 {
-    private readonly ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>> Recorder;
+    private readonly ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>> IndividualAssociator;
 
-    /// <summary>Instantiates a <see cref="SemanticAttributeNamedAssociator"/>, associating semantic named attribute arguments.</summary>
-    /// <param name="recorder">Records associated semantic named attribute arguments.</param>
+    /// <summary>Instantiates an associator of semantic named attribute arguments with parameters.</summary>
+    /// <param name="individualAssociator">Associates individual semantic named attribute arguments with parameters.</param>
     public SemanticAttributeNamedAssociator(
-        ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>> recorder)
+        ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>> individualAssociator)
     {
-        Recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
+        IndividualAssociator = individualAssociator ?? throw new ArgumentNullException(nameof(individualAssociator));
     }
 
-    void ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>>.Handle(
-        IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData> command)
+    void ICommandHandler<IAssociateAllArgumentsCommand<IAssociateAllSemanticAttributeNamedArgumentsData>>.Handle(
+        IAssociateAllArgumentsCommand<IAssociateAllSemanticAttributeNamedArgumentsData> command)
     {
         if (command is null)
         {
@@ -34,12 +35,19 @@ public sealed class SemanticAttributeNamedAssociator
 
         foreach (var association in command.Data.Associations)
         {
-            var parameter = new NamedParameter(association.Key);
-            var argumentData = new SemanticAttributeNamedArgumentData(association.Value);
-
-            var recordCommand = new RecordSemanticAttributeNamedAssociationCommand(parameter, argumentData);
-
-            Recorder.Handle(recordCommand);
+            AssociateArgument(association.Key, association.Value);
         }
+    }
+
+    private void AssociateArgument(
+        string parameterName,
+        TypedConstant argument)
+    {
+        var parameter = new NamedParameter(parameterName);
+        var argumentData = new SemanticAttributeNamedArgumentData(argument);
+
+        var associateIndividualCommand = new AssociateSingleArgumentCommand(parameter, argumentData);
+
+        IndividualAssociator.Handle(associateIndividualCommand);
     }
 }

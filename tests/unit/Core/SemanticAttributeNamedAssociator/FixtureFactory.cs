@@ -6,38 +6,37 @@ using Paraminter.Arguments.Semantic.Attributes.Named.Models;
 using Paraminter.Commands;
 using Paraminter.Cqs.Handlers;
 using Paraminter.Parameters.Named.Models;
-using Paraminter.Recorders.Commands;
 using Paraminter.Semantic.Attributes.Named.Koalemos.Models;
 
 internal static class FixtureFactory
 {
     public static IFixture Create()
     {
-        Mock<ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> recorderMock = new();
+        Mock<ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> individualAssociatorMock = new();
 
-        SemanticAttributeNamedAssociator sut = new(recorderMock.Object);
+        SemanticAttributeNamedAssociator sut = new(individualAssociatorMock.Object);
 
-        return new Fixture(sut, recorderMock);
+        return new Fixture(sut, individualAssociatorMock);
     }
 
     private sealed class Fixture
         : IFixture
     {
-        private readonly ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>> Sut;
+        private readonly ICommandHandler<IAssociateAllArgumentsCommand<IAssociateAllSemanticAttributeNamedArgumentsData>> Sut;
 
-        private readonly Mock<ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> RecorderMock;
+        private readonly Mock<ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> IndividualAssociatorMock;
 
         public Fixture(
-            ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>> sut,
-            Mock<ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> recorderMock)
+            ICommandHandler<IAssociateAllArgumentsCommand<IAssociateAllSemanticAttributeNamedArgumentsData>> sut,
+            Mock<ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> individualAssociatorMock)
         {
             Sut = sut;
 
-            RecorderMock = recorderMock;
+            IndividualAssociatorMock = individualAssociatorMock;
         }
 
-        ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>> IFixture.Sut => Sut;
+        ICommandHandler<IAssociateAllArgumentsCommand<IAssociateAllSemanticAttributeNamedArgumentsData>> IFixture.Sut => Sut;
 
-        Mock<ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> IFixture.RecorderMock => RecorderMock;
+        Mock<ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> IFixture.IndividualAssociatorMock => IndividualAssociatorMock;
     }
 }

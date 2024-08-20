@@ -8,7 +8,6 @@ using Paraminter.Arguments.Semantic.Attributes.Named.Models;
 using Paraminter.Commands;
 using Paraminter.Cqs.Handlers;
 using Paraminter.Parameters.Named.Models;
-using Paraminter.Recorders.Commands;
 using Paraminter.Semantic.Attributes.Named.Koalemos.Models;
 
 using System;
@@ -47,26 +46,26 @@ public sealed class Handle
         var parameterNames = associations.Select(static (association) => association.Key).ToArray();
         var arguments = associations.Select(static (association) => association.Value).ToArray();
 
-        Mock<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData>> commandMock = new();
+        Mock<IAssociateAllArgumentsCommand<IAssociateAllSemanticAttributeNamedArgumentsData>> commandMock = new();
 
         commandMock.Setup(static (command) => command.Data.Associations).Returns(attribute.NamedArguments);
 
         Target(commandMock.Object);
 
-        Fixture.RecorderMock.Verify(static (recorder) => recorder.Handle(It.IsAny<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>()), Times.Exactly(3));
-        Fixture.RecorderMock.Verify(RecordExpression(parameterNames[0], arguments[0]), Times.Once());
-        Fixture.RecorderMock.Verify(RecordExpression(parameterNames[1], arguments[1]), Times.Once());
-        Fixture.RecorderMock.Verify(RecordExpression(parameterNames[2], arguments[2]), Times.Once());
+        Fixture.IndividualAssociatorMock.Verify(static (associator) => associator.Handle(It.IsAny<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>()), Times.Exactly(3));
+        Fixture.IndividualAssociatorMock.Verify(AssociateIndividualCommand(parameterNames[0], arguments[0]), Times.Once());
+        Fixture.IndividualAssociatorMock.Verify(AssociateIndividualCommand(parameterNames[1], arguments[1]), Times.Once());
+        Fixture.IndividualAssociatorMock.Verify(AssociateIndividualCommand(parameterNames[2], arguments[2]), Times.Once());
     }
 
-    private static Expression<Action<ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>>> RecordExpression(
+    private static Expression<Action<ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>>> AssociateIndividualCommand(
         string parameterName,
         TypedConstant argument)
     {
-        return (recorder) => recorder.Handle(It.Is(MatchRecordCommand(parameterName, argument)));
+        return (associator) => associator.Handle(It.Is(MatchAssociateIndividualCommand(parameterName, argument)));
     }
 
-    private static Expression<Func<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>, bool>> MatchRecordCommand(
+    private static Expression<Func<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>, bool>> MatchAssociateIndividualCommand(
         string parameterName,
         TypedConstant argument)
     {
@@ -88,7 +87,7 @@ public sealed class Handle
     }
 
     private void Target(
-        IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedData> command)
+        IAssociateAllArgumentsCommand<IAssociateAllSemanticAttributeNamedArgumentsData> command)
     {
         Fixture.Sut.Handle(command);
     }

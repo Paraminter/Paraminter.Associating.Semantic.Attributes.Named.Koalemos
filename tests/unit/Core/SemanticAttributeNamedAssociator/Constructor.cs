@@ -3,9 +3,9 @@
 using Moq;
 
 using Paraminter.Arguments.Semantic.Attributes.Named.Models;
+using Paraminter.Commands;
 using Paraminter.Cqs.Handlers;
 using Paraminter.Parameters.Named.Models;
-using Paraminter.Recorders.Commands;
 
 using System;
 
@@ -14,7 +14,7 @@ using Xunit;
 public sealed class Constructor
 {
     [Fact]
-    public void NullRecorder_ThrowsArgumentNullException()
+    public void NullIndividualAssociator_ThrowsArgumentNullException()
     {
         var result = Record.Exception(() => Target(null!));
 
@@ -24,14 +24,14 @@ public sealed class Constructor
     [Fact]
     public void ValidArguments_ReturnsAssociator()
     {
-        var result = Target(Mock.Of<ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>>());
+        var result = Target(Mock.Of<ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>>());
 
         Assert.NotNull(result);
     }
 
     private static SemanticAttributeNamedAssociator Target(
-        ICommandHandler<IRecordArgumentAssociationCommand<INamedParameter, ISemanticAttributeNamedArgumentData>> recorder)
+        ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>> individualAssociator)
     {
-        return new SemanticAttributeNamedAssociator(recorder);
+        return new SemanticAttributeNamedAssociator(individualAssociator);
     }
 }
