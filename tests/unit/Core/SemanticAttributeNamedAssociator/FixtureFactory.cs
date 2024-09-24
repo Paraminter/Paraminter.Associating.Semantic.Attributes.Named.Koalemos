@@ -1,42 +1,43 @@
-﻿namespace Paraminter.Semantic.Attributes.Named.Koalemos;
+﻿namespace Paraminter.Associating.Semantic.Attributes.Named.Koalemos;
 
 using Moq;
 
 using Paraminter.Arguments.Semantic.Attributes.Named.Models;
-using Paraminter.Commands;
+using Paraminter.Associating.Commands;
+using Paraminter.Associating.Semantic.Attributes.Named.Koalemos.Models;
 using Paraminter.Cqs.Handlers;
+using Paraminter.Pairing.Commands;
 using Paraminter.Parameters.Named.Models;
-using Paraminter.Semantic.Attributes.Named.Koalemos.Models;
 
 internal static class FixtureFactory
 {
     public static IFixture Create()
     {
-        Mock<ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> individualAssociatorMock = new();
+        Mock<ICommandHandler<IPairArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> pairerMock = new();
 
-        SemanticAttributeNamedAssociator sut = new(individualAssociatorMock.Object);
+        SemanticAttributeNamedAssociator sut = new(pairerMock.Object);
 
-        return new Fixture(sut, individualAssociatorMock);
+        return new Fixture(sut, pairerMock);
     }
 
     private sealed class Fixture
         : IFixture
     {
-        private readonly ICommandHandler<IAssociateAllArgumentsCommand<IAssociateAllSemanticAttributeNamedArgumentsData>> Sut;
+        private readonly ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedArgumentsData>> Sut;
 
-        private readonly Mock<ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> IndividualAssociatorMock;
+        private readonly Mock<ICommandHandler<IPairArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> PairerMock;
 
         public Fixture(
-            ICommandHandler<IAssociateAllArgumentsCommand<IAssociateAllSemanticAttributeNamedArgumentsData>> sut,
-            Mock<ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> individualAssociatorMock)
+            ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedArgumentsData>> sut,
+            Mock<ICommandHandler<IPairArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> pairerMock)
         {
             Sut = sut;
 
-            IndividualAssociatorMock = individualAssociatorMock;
+            PairerMock = pairerMock;
         }
 
-        ICommandHandler<IAssociateAllArgumentsCommand<IAssociateAllSemanticAttributeNamedArgumentsData>> IFixture.Sut => Sut;
+        ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedArgumentsData>> IFixture.Sut => Sut;
 
-        Mock<ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> IFixture.IndividualAssociatorMock => IndividualAssociatorMock;
+        Mock<ICommandHandler<IPairArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>> IFixture.PairerMock => PairerMock;
     }
 }

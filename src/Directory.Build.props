@@ -9,8 +9,8 @@
 
         <Owners>Paraminter</Owners>
         <Authors>ErikWe</Authors>
-        <PackageProjectUrl>https://github.com/Paraminter/Paraminter.Semantic.Attributes.Named.Koalemos</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/Paraminter/Paraminter.Semantic.Attributes.Named.Koalemos</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/Paraminter/Paraminter.Associating.Semantic.Attributes.Named.Koalemos</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Paraminter/Paraminter.Associating.Semantic.Attributes.Named.Koalemos</RepositoryUrl>
         <PackageReadmeFile>README.nupkg.md</PackageReadmeFile>
         <PackageIcon>Logo.png</PackageIcon>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
