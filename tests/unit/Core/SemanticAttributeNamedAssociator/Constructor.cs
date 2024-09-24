@@ -1,10 +1,10 @@
-﻿namespace Paraminter.Semantic.Attributes.Named.Koalemos;
+﻿namespace Paraminter.Associating.Semantic.Attributes.Named.Koalemos;
 
 using Moq;
 
 using Paraminter.Arguments.Semantic.Attributes.Named.Models;
-using Paraminter.Commands;
 using Paraminter.Cqs.Handlers;
+using Paraminter.Pairing.Commands;
 using Paraminter.Parameters.Named.Models;
 
 using System;
@@ -14,7 +14,7 @@ using Xunit;
 public sealed class Constructor
 {
     [Fact]
-    public void NullIndividualAssociator_ThrowsArgumentNullException()
+    public void NullPairer_ThrowsArgumentNullException()
     {
         var result = Record.Exception(() => Target(null!));
 
@@ -24,14 +24,14 @@ public sealed class Constructor
     [Fact]
     public void ValidArguments_ReturnsAssociator()
     {
-        var result = Target(Mock.Of<ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>>());
+        var result = Target(Mock.Of<ICommandHandler<IPairArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>>());
 
         Assert.NotNull(result);
     }
 
     private static SemanticAttributeNamedAssociator Target(
-        ICommandHandler<IAssociateSingleArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>> individualAssociator)
+        ICommandHandler<IPairArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>> pairer)
     {
-        return new SemanticAttributeNamedAssociator(individualAssociator);
+        return new SemanticAttributeNamedAssociator(pairer);
     }
 }
