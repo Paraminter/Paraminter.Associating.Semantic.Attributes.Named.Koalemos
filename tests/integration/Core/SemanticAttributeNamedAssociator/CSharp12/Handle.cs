@@ -14,6 +14,8 @@ using Paraminter.Parameters.Named.Models;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Xunit;
 
@@ -22,7 +24,7 @@ public sealed class Handle
     private readonly IFixture Fixture = FixtureFactory.Create();
 
     [Fact]
-    public void AttributeUsage_PairsAll()
+    public async Task AttributeUsage_PairsAll()
     {
         var source = """
             using System;
@@ -51,19 +53,20 @@ public sealed class Handle
 
         commandMock.Setup(static (command) => command.Data.Associations).Returns(attribute.NamedArguments);
 
-        Target(commandMock.Object);
+        await Target(commandMock.Object, CancellationToken.None);
 
-        Fixture.PairerMock.Verify(PairArgumentExpression(parameterNames[0], arguments[0]), Times.Once());
-        Fixture.PairerMock.Verify(PairArgumentExpression(parameterNames[1], arguments[1]), Times.Once());
-        Fixture.PairerMock.Verify(PairArgumentExpression(parameterNames[2], arguments[2]), Times.Once());
-        Fixture.PairerMock.Verify(static (handler) => handler.Handle(It.IsAny<IPairArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>()), Times.Exactly(3));
+        Fixture.PairerMock.Verify(PairArgumentExpression(parameterNames[0], arguments[0], It.IsAny<CancellationToken>()), Times.Once());
+        Fixture.PairerMock.Verify(PairArgumentExpression(parameterNames[1], arguments[1], It.IsAny<CancellationToken>()), Times.Once());
+        Fixture.PairerMock.Verify(PairArgumentExpression(parameterNames[2], arguments[2], It.IsAny<CancellationToken>()), Times.Once());
+        Fixture.PairerMock.Verify(static (handler) => handler.Handle(It.IsAny<IPairArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
     }
 
-    private static Expression<Action<ICommandHandler<IPairArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>>> PairArgumentExpression(
+    private static Expression<Func<ICommandHandler<IPairArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>>, Task>> PairArgumentExpression(
         string parameterName,
-        TypedConstant argument)
+        TypedConstant argument,
+        CancellationToken cancellationToken)
     {
-        return (handler) => handler.Handle(It.Is(MatchPairArgumentCommand(parameterName, argument)));
+        return (handler) => handler.Handle(It.Is(MatchPairArgumentCommand(parameterName, argument)), cancellationToken);
     }
 
     private static Expression<Func<IPairArgumentCommand<INamedParameter, ISemanticAttributeNamedArgumentData>, bool>> MatchPairArgumentCommand(
@@ -87,9 +90,10 @@ public sealed class Handle
         return Equals(argument, argumentData.Argument);
     }
 
-    private void Target(
-        IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedArgumentsData> command)
+    private async Task Target(
+        IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedArgumentsData> command,
+        CancellationToken cancellationToken)
     {
-        Fixture.Sut.Handle(command);
+        await Fixture.Sut.Handle(command, cancellationToken);
     }
 }

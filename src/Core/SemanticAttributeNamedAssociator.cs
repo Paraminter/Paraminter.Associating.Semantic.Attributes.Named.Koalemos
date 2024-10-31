@@ -11,6 +11,8 @@ using Paraminter.Pairing.Commands;
 using Paraminter.Parameters.Named.Models;
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 /// <summary>Associates semantic named attribute arguments with parameters.</summary>
 public sealed class SemanticAttributeNamedAssociator
@@ -26,8 +28,9 @@ public sealed class SemanticAttributeNamedAssociator
         Pairer = pairer ?? throw new ArgumentNullException(nameof(pairer));
     }
 
-    void ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedArgumentsData>>.Handle(
-        IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedArgumentsData> command)
+    async Task ICommandHandler<IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedArgumentsData>>.Handle(
+        IAssociateArgumentsCommand<IAssociateSemanticAttributeNamedArgumentsData> command,
+        CancellationToken cancellationToken)
     {
         if (command is null)
         {
@@ -36,19 +39,20 @@ public sealed class SemanticAttributeNamedAssociator
 
         foreach (var association in command.Data.Associations)
         {
-            PairArgument(association.Key, association.Value);
+            await PairArgument(association.Key, association.Value, cancellationToken).ConfigureAwait(false);
         }
     }
 
-    private void PairArgument(
+    private async Task PairArgument(
         string parameterName,
-        TypedConstant argument)
+        TypedConstant argument,
+        CancellationToken cancellationToken)
     {
         var parameter = new NamedParameter(parameterName);
         var argumentData = new SemanticAttributeNamedArgumentData(argument);
 
         var command = new PairArgumentCommand(parameter, argumentData);
 
-        Pairer.Handle(command);
+        await Pairer.Handle(command, cancellationToken).ConfigureAwait(false);
     }
 }
