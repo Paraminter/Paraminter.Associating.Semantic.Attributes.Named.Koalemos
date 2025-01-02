@@ -7,7 +7,6 @@ using Moq;
 using Paraminter.Arguments.Semantic.Attributes.Named.Models;
 using Paraminter.Associating.Commands;
 using Paraminter.Associating.Semantic.Attributes.Named.Koalemos.Models;
-using Paraminter.Cqs;
 using Paraminter.Pairing.Commands;
 using Paraminter.Parameters.Named.Models;
 
